@@ -7,17 +7,18 @@ const fs   = require('fs');
 const util  = require('util');
 const sprintf = require('sprintf').sprintf
 const path = require('path');
-const exec = require('child_process').exec;
 const gm = require('gm');
 
 let program = require('commander').version('0.0.1')
     .option('-i, --input [path]', 'input file')
     .option('-o, --output [path]', 'output path')
     .option('-d, --delay [time]', 'delay time')
+    .option('-s, --saturation [percent value]', 'saturation value')
     .parse(process.argv);
 const input = program.input;
 const output = program.output !== undefined ? program.output : "out.gif";
 const delay = program.delay !== undefined ? program.delay : DEFAULT_DELAY_TIME;
+const saturation = program.saturation !== undefined ? program.saturation : 100;
 
 const doNothing = function(){};
 
@@ -39,22 +40,15 @@ const createFrames = function(dirPath, cb){
     };
 
     filePaths.forEach(function(outputPath, c){
-        const cb = function (err) {
-            if(err){
-                console.error(err);
-                return;
-            }
-            counter++;
-            maybeFinished();
-        };
-        if(c == 0){
-            // convert gif format only if initial frame
-            gm(input).write(outputPath, cb);
-        } else {
-            // change hue value in another frame
-            gm(input).modulate(100, 100, Math.floor(c * 360 / (frame_num - 1)))
-                .write(outputPath, cb);
-        }
+        gm(input).modulate(100, saturation, Math.floor(c * 360 / (frame_num - 1)))
+            .write(outputPath, function (err) {
+                if(err){
+                    console.error(err);
+                    return;
+                }
+                counter++;
+                maybeFinished();
+            });
     });
 };
 
