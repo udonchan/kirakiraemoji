@@ -24,3 +24,7 @@ $ npm link
 ```
 % kirakiraemoji -i medetai.png -s 150 -o kiramedetai.gif
 ```
+
+| input file  | output file  |
+|:-:|:-:|
+| ![input](https://raw.githubusercontent.com/udonchan/kirakiraemoji/master/img/medetai.png)  | ![output](https://raw.githubusercontent.com/udonchan/kirakiraemoji/master/img/kiramedetai.gif)  |
