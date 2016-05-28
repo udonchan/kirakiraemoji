@@ -20,8 +20,9 @@ program.option('-i, --input <path>', 'input file');
 program.option('-o, --output [path]', 'output path');
 program.option('-s, --saturation [percent value]', 'saturation value');
 program.option('-p, --plain', 'Do NOT Kirakira effect', function(){return true}, 0);
-program.option('--framenum [integer]', 'frame number', parseInt);
+program.option('--colors [value]', 'preferred number of colors in the image', parseInt);
 program.option('--delay [time]', 'delay time', parseInt);
+program.option('--framenum [integer]', 'frame number', parseInt);
 program.option('--guruguru', 'enable guruguru effect', function(){return true}, 0);
 program.parse(process.argv);
 const input = program.input;
@@ -54,7 +55,10 @@ const createFrames = function(dirPath, cb){
             imArgs = imArgs.concat(['-modulate', 
                                     ['100', saturation, Math.floor(c * 360 / frame_num)].join(',')]);
         }
-        if(program.guruguru){
+        if(program.colors !== undefined){
+            imArgs = imArgs.concat(['-colors', program.colors]);
+        }
+        if(program.guruguru !== undefined){
             imArgs = imArgs.concat(['-clone', '0', '-distort', 'SRT',  Math.floor(c * 360 / frame_num)]);
         }
         imArgs.push(outputPath);
