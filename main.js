@@ -8,10 +8,7 @@ const util  = require('util');
 const sprintf = require('sprintf').sprintf
 const path = require('path');
 const im = require('imagemagick');
-
-function increaseVerbosity(v, total) {
-  return total + 1;
-}
+const returnTrue = function(){return true};
 
 let program = require('commander');
 program.version('0.0.1');
@@ -19,11 +16,12 @@ program.usage('-i <input file> [options]');
 program.option('-i, --input <path>', 'input file');
 program.option('-o, --output [path]', 'output path');
 program.option('-s, --saturation [percent value]', 'saturation value');
-program.option('-p, --plain', 'Do NOT Kirakira effect', function(){return true}, 0);
+program.option('-p, --plain', 'Do NOT Kirakira effect', returnTrue, 0);
 program.option('--colors [value]', 'preferred number of colors in the image', parseInt);
 program.option('--delay [time]', 'delay time', parseInt);
 program.option('--framenum [integer]', 'frame number', parseInt);
-program.option('--guruguru', 'enable guruguru effect', function(){return true}, 0);
+program.option('--guruguru', 'enable guruguru effect', returnTrue, 0);
+program.option('--reverse', 'Invert the effect time', returnTrue, 0);
 program.parse(process.argv);
 const input = program.input;
 const output = program.output !== undefined ? program.output : "out.gif";
@@ -51,15 +49,16 @@ const createFrames = function(dirPath, cb){
 
     filePaths.forEach(function(outputPath, c){
         let imArgs = [input];
+        const rotatenum = (program.reverse?-1:1) * Math.floor(c * 360 / frame_num);
         if(!program.plain){
             imArgs = imArgs.concat(['-modulate', 
-                                    ['100', saturation, Math.floor(c * 360 / frame_num)].join(',')]);
+                                    ['100', saturation, rotatenum].join(',')]);
         }
         if(program.colors !== undefined){
             imArgs = imArgs.concat(['-colors', program.colors]);
         }
         if(program.guruguru !== undefined){
-            imArgs = imArgs.concat(['-clone', '0', '-distort', 'SRT',  Math.floor(c * 360 / frame_num)]);
+            imArgs = imArgs.concat(['-clone', '0', '-distort', 'SRT', rotatenum]);
         }
         imArgs.push(outputPath);
         im.convert(imArgs, function(err, stdout){
