@@ -1,10 +1,10 @@
 # kirakiraemoji
 
-This program is Kirakira Animated GIF generaor. It is dependent on the GraphicsMagick.
+This program is a Kirakira Animated GIF generaor. It is dependent on the ImageMagick.
 
 ## Usage
 
-First download and install GraphicsMagick or ImageMagick. In Mac OS X, you can simply use Homebrew or MacPorts. Then clone this repo:
+First download and install ImageMagick. In Mac OS X, you can simply use Homebrew or MacPorts. Then clone this repo:
 
 ```
 $ git clone https://github.com/udonchan/kirakiraemoji.git

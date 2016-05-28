@@ -12,7 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "commander": "^2.9.0",
-    "gm": "^1.22.0",
     "sprintf": "^0.1.5",
     "temp": "^0.8.3"
   }
