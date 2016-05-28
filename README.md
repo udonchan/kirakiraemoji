@@ -28,3 +28,11 @@ $ npm link
 | input file  | output file  |
 |:-:|:-:|
 | ![input](https://raw.githubusercontent.com/udonchan/kirakiraemoji/master/img/medetai.png)  | ![output](https://raw.githubusercontent.com/udonchan/kirakiraemoji/master/img/kiramedetai.gif)  |
+
+```
+% kirakiraemoji -r 128 --colors 32 --guruguru --delay 8 --framenum 16 -i hitode909.png -o guruhitode909.gif
+```
+
+| input file  | output file  |
+|:-:|:-:|
+| ![input](https://raw.githubusercontent.com/udonchan/kirakiraemoji/master/img/hitode909.png)  | ![output](https://raw.githubusercontent.com/udonchan/kirakiraemoji/master/img/gurukirahitode909.gif)  |
