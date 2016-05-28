@@ -14,12 +14,13 @@ let program = require('commander');
 program.version('0.0.1');
 program.usage('-i <input file> [options]');
 program.option('-i, --input <path>', 'input file');
-program.option('-o, --output [path]', 'output path');
-program.option('-s, --saturation [percent value]', 'saturation value');
+program.option('-o, --output <path>', 'output path');
+program.option('-s, --saturation <percent value>]', 'saturation value');
 program.option('-p, --plain', 'Do NOT Kirakira effect', returnTrue, 0);
-program.option('--colors [value]', 'preferred number of colors in the image', parseInt);
-program.option('--delay [time]', 'delay time', parseInt);
-program.option('--framenum [integer]', 'frame number', parseInt);
+program.option('-r  --resize <geometry?', 'resize the image');
+program.option('--colors <value>', 'preferred number of colors in the image', parseInt);
+program.option('--delay <time>', 'delay time', parseInt);
+program.option('--framenum <integer>', 'frame number', parseInt);
 program.option('--guruguru', 'enable guruguru effect', returnTrue, 0);
 program.option('--reverse', 'Invert the effect time', returnTrue, 0);
 program.parse(process.argv);
@@ -46,10 +47,12 @@ const createFrames = function(dirPath, cb){
         }
         cb(filePaths);
     };
-
     filePaths.forEach(function(outputPath, c){
         let imArgs = [input];
         const rotatenum = (program.reverse?-1:1) * Math.floor(c * 360 / frame_num);
+        if(program.resize !== undefined){
+            imArgs = imArgs.concat(['-resize', program.resize]);
+        }
         if(!program.plain){
             imArgs = imArgs.concat(['-modulate', 
                                     ['100', saturation, rotatenum].join(',')]);
@@ -58,7 +61,7 @@ const createFrames = function(dirPath, cb){
             imArgs = imArgs.concat(['-colors', program.colors]);
         }
         if(program.guruguru !== undefined){
-            imArgs = imArgs.concat(['-clone', '0', '-distort', 'SRT', rotatenum]);
+            imArgs = imArgs.concat(['-distort', 'SRT', rotatenum]);
         }
         imArgs.push(outputPath);
         im.convert(imArgs, function(err, stdout){
@@ -80,8 +83,8 @@ const onAllocatedTempDirectory = function(err, dirPath) {
     }
     createFrames(dirPath, function(filePaths){
         let imArgs = ['-dispose', 'Background',
-                     '-delay', delay,
-                     '-loop', '0'].concat(filePaths);
+                      '-delay', delay,
+                      '-loop', '0'].concat(filePaths);
         imArgs.push(output)
         im.convert(imArgs, function(err, stdout){
             if(err){
