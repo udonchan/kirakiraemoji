@@ -37,7 +37,7 @@ const generateAnimatedGIF = function(filePaths){
     let imArgs = ['-dispose', 'Background',
                   '-delay', delay,
                   '-loop', '0'].concat(filePaths);
-    imArgs.push(output)
+    imArgs.push(output.match(/\.gif$/) === null ? output + ".gif" : output);
         im.convert(imArgs, function(err, stdout){
             if(err){
                 console.error(err);
