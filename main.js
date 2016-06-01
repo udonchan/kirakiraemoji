@@ -16,17 +16,21 @@ let program = require('commander');
 program.version('0.0.1');
 program.usage('-i <input file> [options]');
 program.option('-i, --input <path>', 'input file');
+program.option('-l --label <string>', 'label string');
 program.option('-o, --output <path>', 'output path');
 program.option('-s, --saturation <percent value>', 'saturation value');
 program.option('-p, --plain', 'Do NOT Kirakira effect', returnTrue, 0);
 program.option('-r  --resize <geometry>', 'resize the image');
 program.option('--colors <value>', 'preferred number of colors in the image', parseInt);
 program.option('--delay <time>', 'delay time', parseInt);
+program.option('--font <font_file>', 'font file for label');
 program.option('--framenum <integer>', 'frame number', parseInt);
 program.option('--guruguru', 'enable guruguru effect', returnTrue, 0);
 program.option('--reverse', 'Invert the effect time', returnTrue, 0);
 program.parse(process.argv);
 let input = program.input;
+const label = program.label;
+const font = program.font;
 const output = program.output !== undefined ? program.output : "out.gif";
 const delay = program.delay !== undefined ? program.delay : DEFAULT_DELAY_TIME;
 const frame_num  = program.frame_num !== undefined ? options.frame_num : DEFAULT_FRAME_NUM;
@@ -38,19 +42,16 @@ const generateAnimatedGIF = function(filePaths){
                   '-delay', delay,
                   '-loop', '0'].concat(filePaths);
     imArgs.push(output.match(/\.gif$/) === null ? output + ".gif" : output);
-        im.convert(imArgs, function(err, stdout){
-            if(err){
-                console.error(err);
-                return;
-            }
-        });
+    im.convert(imArgs, function(err, stdout){
+        if(err){
+            console.error(err);
+            return;
+        }
+    });
 };
 
-const onAllocatedTempDirectory = function(err, dirPath) {
-    if (err) {
-        console.error(err);
-        return;
-    }
+
+const onCompleteValidInput = function(input, workingDir){
     const options = {
         reverse: program.reverse,
         frame_num: program.framenum,
@@ -60,22 +61,76 @@ const onAllocatedTempDirectory = function(err, dirPath) {
         colors: program.colors,
         rotation: program.guruguru !== undefined
     };
-    phaseImageEffecter.createFrames(input, dirPath, frame_num, options, generateAnimatedGIF);
+    phaseImageEffecter.createFrames(input, workingDir, frame_num, options, generateAnimatedGIF);
 };
 
-module.exports = function(){
-    if(input === undefined){
-        console.error('input file is required');
-        return;
-    }
-    // file exists?
-    fs.open(input, 'r', function(err, fd){
+const generateLayerImage = function(images, outputPath, cb){
+    // TODO: generate label on input image
+    cb(images[0]);
+};
+
+const generateLabelImage = function(label, outputPath, cb){
+    var pathname = path.join(outputPath, 'label.png');
+    let imArgs = font !== undefined ? ['-font', font] : [];
+    imArgs = imArgs.concat(['-pointsize', '128',
+                            '-fill', 'red',
+                            '-background', 'none',
+                            'label:' + label +'',
+                            '-geometry', '128x128!',
+                            pathname
+    ]);
+    im.convert(imArgs, function(err, stdout){
         if(err){
             console.error(err);
             return;
         }
-        // create temp working dir if file exists
-        temp.mkdir(TEMP_DIRECTRY_PREFIX, onAllocatedTempDirectory);
+        cb(pathname);
+    });
+};
+
+const varidateInputFile = function(input_file, cb){
+    // TODO: check valid image format
+    fs.open(input_file, 'r', function(err, fd){
+        if(err){
+            console.error(err);
+            return;
+        }
+        cb();
         fs.close(fd);
     });
+};
+
+const onAllocatedTempDirectory = function(err, tempDirPath) {
+    if (err) {
+        // fail allocate temp working dir
+        console.error(err);
+        return;
+    }
+    if(label !== undefined){
+        // if label exists create label image
+        generateLabelImage(label, tempDirPath, function(labelImage){
+            if(input === undefined){
+                onCompleteValidInput(labelImage, tempDirPath);
+            } else {
+                varidateInputFile(input, function(){
+                    generateLayerImage([input, label], tempDirPath, function(path){
+                        onCompleteValidInput(path, tempDirPath);
+                    });
+                });
+            }
+        });
+    } else {
+        varidateInputFile(input, function(){
+            onCompleteValidInput(input, tempDirPath);
+        });
+    }
+};
+
+module.exports = function(){
+    if(input === undefined && label === undefined){
+        console.error('input file or label is required');
+        return;
+    }
+    // create temp working dir
+    temp.mkdir(TEMP_DIRECTRY_PREFIX, onAllocatedTempDirectory);
 };
