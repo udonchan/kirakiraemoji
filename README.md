@@ -27,11 +27,11 @@ Basic usage is following:
 % kirakiraemoji -i medetai.png -s 150 -o kiramedetai.gif
 ```
 
-In case of using "--guruguru" option, to enable rotation effect.
-
 | input file  | output file  |
 |:-:|:-:|
 | ![input](https://raw.githubusercontent.com/udonchan/kirakiraemoji/master/img/medetai.png)  | ![output](https://raw.githubusercontent.com/udonchan/kirakiraemoji/master/img/kiramedetai.gif)  |
+
+In case of using "--guruguru" option, to enable rotation effect.
 
 ```
 % kirakiraemoji -r 128 --colors 32 --guruguru --delay 8 --framenum 16 -i hitode909.png -o guruhitode909.gif
