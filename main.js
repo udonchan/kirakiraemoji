@@ -33,7 +33,7 @@ let input = program.input;
 const label = program.label;
 const fill = program.fill;
 const font = program.font;
-const output = program.output !== undefined ? program.output : "out.gif";
+const output = program.output !== undefined ? program.output : "out";
 const delay = program.delay !== undefined ? program.delay : DEFAULT_DELAY_TIME;
 const frame_num  = program.framenum !== undefined ? program.framenum : DEFAULT_FRAME_NUM;
 
@@ -53,7 +53,6 @@ const generateAnimatedGIF = function(filePaths){
     });
 };
 
-
 const onCompleteValidInput = function(input, workingDir){
     const options = {
         reverse: program.reverse,
@@ -72,11 +71,15 @@ const generateLayerImage = function(images, outputPath, cb){
     cb(images[0]);
 };
 
+const random24bitHex = function(){
+    return Math.floor(Math.random()*16777216).toString(16);
+};
+
 const generateLabelImage = function(label, outputPath, cb){
     var pathname = path.join(outputPath, 'label.png');
     let imArgs = font !== undefined ? ['-font', font] : [];
     imArgs = imArgs.concat(['-pointsize', '128',
-                            '-fill', (fill !== undefined? fill : 'red'),
+                            '-fill', (fill !== undefined? fill : '#' + random24bitHex()),
                             '-background', 'none',
                             'label:' + label +'',
                             '-geometry', '128x128!',
