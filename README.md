@@ -21,9 +21,13 @@ $ npm link
 
 ## Example
 
+Basic usage is following:
+
 ```
 % kirakiraemoji -i medetai.png -s 150 -o kiramedetai.gif
 ```
+
+In case of using "--guruguru" option, to enable rotation effect.
 
 | input file  | output file  |
 |:-:|:-:|
@@ -36,3 +40,23 @@ $ npm link
 | input file  | output file  |
 |:-:|:-:|
 | ![input](https://raw.githubusercontent.com/udonchan/kirakiraemoji/master/img/hitode909.png)  | ![output](https://raw.githubusercontent.com/udonchan/kirakiraemoji/master/img/gurukirahitode909.gif)  |
+
+You can use '--label' option. It will assign or generate a label to an image. If you want to use a multi-byte character, you need use "--font" option to enable specify the font.
+
+```
+# to download japanese fonts 
+% curl -C- "http://fonts.gstatic.com/ea/notosansjapanese/v6/download.zip" -o noto.zip
+% unzip noto.zip 
+Archive:  noto.zip
+  inflating: NotoSansJP-Black.otf    
+  inflating: NotoSansJP-Bold.otf     
+  inflating: NotoSansJP-DemiLight.otf  
+  inflating: NotoSansJP-Light.otf    
+  inflating: NotoSansJP-Medium.otf   
+  inflating: NotoSansJP-Regular.otf  
+  inflating: NotoSansJP-Thin.otf
+% kirakiraemoji --font ./NotoSansJP-Black.otf --label "ダウンロー\nド" -o download.gif
+```
+| output file  |
+|:-:|
+| ![output](https://raw.githubusercontent.com/udonchan/kirakiraemoji/master/img/download.gif)  | 
