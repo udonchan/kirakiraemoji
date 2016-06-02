@@ -35,15 +35,16 @@ const fill = program.fill;
 const font = program.font;
 const output = program.output !== undefined ? program.output : "out.gif";
 const delay = program.delay !== undefined ? program.delay : DEFAULT_DELAY_TIME;
-const frame_num  = program.frame_num !== undefined ? options.frame_num : DEFAULT_FRAME_NUM;
+const frame_num  = program.framenum !== undefined ? program.framenum : DEFAULT_FRAME_NUM;
 
 const doNothing = function(){};
 
 const generateAnimatedGIF = function(filePaths){
+    const ext = filePaths.length > 1 ? 'gif' : 'png';
     let imArgs = ['-dispose', 'Background',
                   '-delay', delay,
                   '-loop', '0'].concat(filePaths);
-    imArgs.push(output.match(/\.gif$/) === null ? output + ".gif" : output);
+    imArgs.push(output.match(new RegExp("\\." + ext + "$")) === null ? output + "." + ext : output);
     im.convert(imArgs, function(err, stdout){
         if(err){
             console.error(err);
