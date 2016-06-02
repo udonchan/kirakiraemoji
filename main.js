@@ -23,6 +23,7 @@ program.option('-p, --plain', 'Do NOT Kirakira effect', returnTrue, 0);
 program.option('-r  --resize <geometry>', 'resize the image');
 program.option('--colors <value>', 'preferred number of colors in the image', parseInt);
 program.option('--delay <time>', 'delay time', parseInt);
+program.option('--fill <color>', 'color to use when filling a charactors primitive');
 program.option('--font <font_file>', 'font file for label');
 program.option('--framenum <integer>', 'frame number', parseInt);
 program.option('--guruguru', 'enable guruguru effect', returnTrue, 0);
@@ -30,6 +31,7 @@ program.option('--reverse', 'Invert the effect time', returnTrue, 0);
 program.parse(process.argv);
 let input = program.input;
 const label = program.label;
+const fill = program.fill;
 const font = program.font;
 const output = program.output !== undefined ? program.output : "out.gif";
 const delay = program.delay !== undefined ? program.delay : DEFAULT_DELAY_TIME;
@@ -73,7 +75,7 @@ const generateLabelImage = function(label, outputPath, cb){
     var pathname = path.join(outputPath, 'label.png');
     let imArgs = font !== undefined ? ['-font', font] : [];
     imArgs = imArgs.concat(['-pointsize', '128',
-                            '-fill', 'red',
+                            '-fill', (fill !== undefined? fill : 'red'),
                             '-background', 'none',
                             'label:' + label +'',
                             '-geometry', '128x128!',
