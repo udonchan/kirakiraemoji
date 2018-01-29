@@ -102,7 +102,7 @@ const varidateInputFile = function(input_file, cb){
             return;
         }
         cb();
-        fs.close(fd);
+        fs.closeSync(fd);
     });
 };
 
